@@ -1,0 +1,88 @@
+//<script src="../tinytest.js"></script>
+<script>
+   
+    
+ // (Attempted) Implementation of the native Filter method described in ECMASCRIPT 5 
+    
+ function filter(originalArray, callback, thisObject){
+    let filteredCallback = callback; 
+    let filteredArray = [];
+     
+     // optional 'this' argument binded to the callback.
+     if(thisObject){
+         filteredCallback = callback.bind(thisObject);
+     }
+     // calls the callback function once for each element in the originalArray
+    for(let i = 0; i < originalArray.length; i++){
+        if(filteredCallback(originalArray[i], i, originalArray)){
+            filteredArray.push(originalArray[i]);
+        };
+    }
+     
+     return filteredArray;
+};
+    
+    
+  // Tests using tinytsts.js
+    
+tests({
+
+    'It should run the callback function array n times.': function () {
+       let numberOfTimesCallbackHasRun = 0;
+        filter([1, 2, 3], function () {
+            numberOfTimesCallbackHasRun++;
+           console.log('hi');
+        });
+        eq(numberOfTimesCallbackHasRun, 3);
+         
+    },
+
+    'It should pass the ith element as the first argument to the callback': function () {
+        filter([1], function (number) {
+            eq(number, 1);
+        })
+    },
+
+
+    'It should pass in position i as the second argument to the callback.': function () {
+            filter([1], function (number, index) {
+                eq(index, 0);
+            })
+
+        },
+
+    'It should pass in the original array that forEach() as the third argument to the callback.': function() {
+    let testArray = [1, 2, 3];
+    filter(testArray, function (number, index, originalArray) {
+        eq(originalArray, testArray);
+    });
+    },
+
+    'It should accept an optional "this" object': function() {
+      let testArray = [1, 2, 3];
+      let filtereredArray = filter(testArray, function(){});
+        eq(Array.isArray(filtereredArray), true);
+    },
+    
+    'It should return an array': function(){
+        let filteredArray = filter([], function(){});
+        eq(Array.isArray(filteredArray), true);
+    },
+    
+    'It should return a new array, not the array being filtered': function(){
+        let arrayBeingFiltered = [];
+        let filtereredArray = filter(arrayBeingFiltered, function(){});
+        eq(arrayBeingFiltered !== filtereredArray, true);
+    },
+    
+     'It should return a new array that only has elements where callback() calls true': function(){
+        let filteredArray = filter([1,2], function(number) {
+            return number > 1;
+        });
+         eq(filteredArray.length,1);
+         eq(filteredArray[0], 2);
+         
+    }
+    
+});
+</script>
