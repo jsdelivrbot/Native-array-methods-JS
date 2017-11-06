@@ -1,0 +1,103 @@
+<script src="../tinytest.js"></script>
+<script>
+
+/* 
+
+Implementation of the native map array method as closely as possible to the one described in ECMASCRIPT 5: Array.prototype.map()
+https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/map
+http://www.ecma-international.org/ecma-262/5.1/#sec-15.4.4.19
+
+*/
+        
+    function map(originalArray, callback, thisObject){
+        var mappedArray = [];
+        mappedCallback = callback;
+        if (thisObject){
+            mappedCallback = callback.bind(thisObject);
+        }
+        for(var i=0; i < originalArray.length; i++){
+            if(i in originalArray){mappedArray[i] = mappedCallback(originalArray[i], i, originalArray);}
+        }
+        return mappedArray;
+    }
+    
+	
+// Tests using tinytests.js    
+      
+tests({
+
+    'It should run the callback function array n times.': function () {
+       var numberOfTimesCallbackHasRun = 0;
+        map([1, 2, 3], function () {
+            numberOfTimesCallbackHasRun++;
+           console.log('hi');
+        });
+        eq(numberOfTimesCallbackHasRun, 3);
+    },
+
+    'It should pass the ith element as the first argument to the callback': function () {
+        map([1], function (number) {
+            eq(number, 1);
+        })
+    },
+
+
+    'It should pass in position i as the second argument to the callback.': function () {
+
+            map([1], function (number, index) {
+                eq(index, 0);
+            })
+
+        },
+
+    'It should pass in the original array that map() as the third argument to the callback.': function() {
+    var testArray = [1, 2, 3];
+    map(testArray, function (number, index, originalArray) {
+        eq(originalArray, testArray);
+    });
+    },
+
+    'It should accept an optional "this" object': function() {
+       
+        map([1], function(){
+            eq(this.description, 'I should be accessible inside of the callback.');
+            
+        }, {description: 'I should be accessible inside of the callback.'});
+    },
+    
+    'It should return an array': function(){
+        var mappedArray = map([], function(){});
+        eq(Array.isArray(mappedArray), true);
+    },
+    
+    'It should return a new array, not the original array': function(){
+        var arrayBeingMapped = [];
+        var mappedArray = map(arrayBeingMapped, function(){});
+        eq(arrayBeingMapped !== mappedArray, true);
+    },
+    
+    'It should skip unassigned indexes': function(){
+        var weirdArray = [, 1];
+        var mappedArray = map(weirdArray, function double(number){
+            return number * 2;
+        });
+        eq(0 in mappedArray, false);
+        eq(mappedArray.length,2);
+        eq(1 in mappedArray, true);
+        eq(mappedArray[1], 2);
+        console.log(mappedArray);
+    },
+    
+     'It should return a new array that only has elements that have been transformed by callback': function(){
+        var mappedArray = map([1,2], function(number) {
+            return number * 4;
+        });
+         eq(mappedArray.length,2);
+         eq(mappedArray[0], 4);
+         eq(mappedArray[1], 8);
+         
+    }
+    
+});
+</script>
+
