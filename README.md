@@ -6,4 +6,4 @@ Implementation of JavaScript's important native array methods taking into accoun
 - Array.prototype.map()
 - Array.prototype.reduce()
 
-Testing with tinytest.js: https://rawgit.com/joewalnes/jstinytest/master/tinytest.js 
+Testing with tinytest.js: https://cdn.jsdelivr.net/gh/joewalnes/jstinytest/tinytest.js 
